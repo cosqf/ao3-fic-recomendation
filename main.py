@@ -1,16 +1,18 @@
 from wrapped import giveUserInfo, askForDate, askForFandom, askForShip, askForExplicit, askForOrientation
-from web import settingUpBrowser, logIn, gettingHistory, checkBookmarks
+from web import settingUpBrowser, logIn, gettingHistory
 import pandas as pd
 import getpass
 from playwright.sync_api import sync_playwright
 from playwright_stealth import Stealth
 import os
 
-login = False
+login = True
 
 dataFrame = pd.DataFrame(columns= ["fic_id", "rating", "orientations" ,"fandom", "ships", "tags",  "word_count", "last_visited", "bookmarked"])
 
 os.makedirs("data", exist_ok=True)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
 
 username = input ("User: ").lower().strip()
 if login:
@@ -20,7 +22,6 @@ if login:
 
         page = logIn (username, password, page)
         dataFrame = gettingHistory (page, username, dataFrame)
-        checkBookmarks (username, dataFrame, page)
         page.close()
         
         dataFrame.to_json ("data/" + username + "_history_data.json",  date_format='iso')
