@@ -73,10 +73,18 @@ def gettingHistory (page, username, dataFrame):
         page.wait_for_selector("#main > ol.reading.work.index.group")
         work_list = page.locator("li[role='article']")
         count = work_list.count()
+        if count == 0:
+            print (f"error loading page {p}, skipping...")
+            continue
         rows = []
         for i in range (count):
             work = work_list.nth (i)
-            processWork (work, rows)
+            try:
+                processWork (work, rows)
+            except Exception as e:
+                print (f"Error processing work {i} of page {p}: {e}. Waiting and skipping...\n")
+                time.sleep (30)
+                continue
 
         new_rows = pd.DataFrame(rows, columns = ["fic_id", "rating", "orientations" ,"fandom", "ships", "tags",  "word_count", "last_visited", "bookmarked"])
         dataFrame = pd.concat ([dataFrame, new_rows], ignore_index = True)

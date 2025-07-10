@@ -4,7 +4,10 @@ def processWork(work, rows):
     if "deleted" in work.get_attribute("class"): 
         return
     
-    id = int(work.locator("h4.heading a[href^='/works/']").get_attribute("href")[7:])
+    work_link_locator = work.locator("h4.heading a[href^='/works/']")
+    work_link_locator.wait_for(state="attached", timeout=15000)
+
+    id = int (work_link_locator.get_attribute("href", timeout=5000)[7:])
 
     all_ships = work.locator("li.relationships").all()
     ships = [ship.locator("a.tag").inner_text().strip() for ship in all_ships]
